@@ -8,8 +8,10 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+
+
 //connecting to the db 
-mongoose.connect(`mongodb+srv://elenanana0903:${process.env.PASSWORD}@cluster0.fddnv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`).then (()=> {
+mongoose.connect(`mongodb+srv://${process.env.ID}:${process.env.PW}@cluster0.fddnv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`).then (()=> {
     console.log('connected successfully')
 }).catch((error) => {
     console.error("error", error)
