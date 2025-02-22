@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+
+
+// Define the schema
 const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-});
+    address: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+  })
 
 // Hash the password before saving the user
 UserSchema.pre('save', async function (next) {

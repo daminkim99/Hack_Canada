@@ -8,3 +8,21 @@ Content-Type: application/json
 }
 
 
+GET http://localhost:6000/register
+Content-Type: application/json
+
+{
+  "name": "ereiere",
+  "email": "johnn@example.com",
+  "password": "password"
+}
+
+
+POST http://localhost:6000/foods
+Content-Type: application/json
+
+{
+    "name": "Pasta",
+    "itemNumber": 103,
+    "isAvailable": true,
+}
