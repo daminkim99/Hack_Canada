@@ -10,7 +10,18 @@ const Finder = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isButtonClicked, setIsButtonClicked] = useState(false);
     
-//get coordinates 
+//function to send sorted data to the backend 
+
+const sendToBackend = async (filtPlaces) => {
+    try {
+        const response = await axios.post("http://localhost:6000/restoList", { locations: filtPlaces });
+        console.log("Backend Response:", response.data);
+    } catch (error) {
+        console.error("Error sending data to backend:", error);
+    }
+};
+
+  //get coordinates 
 
 const getCoordinates = async (address) => {
     try {
@@ -68,15 +79,24 @@ useEffect(() => {
       if (!address.trim()) return;
   
       setLoading(true);
-  
+
       try {
         // Get coordinates for the given address
         const { lat, lon } = await getCoordinates(address);
         if (lat && lon) {
+
           // Fetch nearby places using lat and lon
           const nearbyPlaces = await searchNearbyPlaces(lat, lon);
-          setData(nearbyPlaces); // Store the results
-          console.log("Fetched Nearby Places:",nearbyPlaces)
+          const filteredPlaces = nearbyPlaces.map(place => ({
+            name: place.tags.name || "Unnamed place",
+            lat: place.lat,
+            lon: place.lon
+          }))
+          setData(filteredPlaces); // Store the results
+        //   console.log("Fetched Nearby Places:",filteredPlaces)
+
+        // Send filtered data to backend for comparison
+        await sendToBackend(filteredPlaces);
         } else {
           setData([]); // In case no coordinates were found
           console.log("no location found for the address")
