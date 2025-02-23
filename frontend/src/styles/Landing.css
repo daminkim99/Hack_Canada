@@ -1,0 +1,15 @@
+.head {
+  text-align: center;
+  margin: 50px auto;
+}
+
+.btn {
+  width: 250px;
+  height: 100px;
+  background-color: #d84572;
+  color: #ffff;
+  font-weight: 600;
+  font-size: 26px;
+  font-style: italic;
+  margin-right: 30px;
+}
