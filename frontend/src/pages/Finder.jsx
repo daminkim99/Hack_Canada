@@ -9,59 +9,52 @@ const Finder = () => {
   const [loading, setLoading] = useState();
   const [isSearching, setIsSearching] = useState(false);
   const [isButtonClicked, setIsButtonClicked] = useState(false);
-    
-//function to send sorted data to the backend 
+  const [addresses, setAddresses] = useState([]);
 
-// const sendToBackend = async (filtPlaces) => {
-//     console.log("Sending data to backend:", filtPlaces);
-//     try {
-//         const response = await axios.post("http://localhost:6000/restoList", { locations: filtPlaces });
-//         console.log("Backend Response:", response.data);
-//     } catch (error) {
-//         console.error("Error sending data to backend:", error);
-//     }
-// };
+  //function to send sorted data to the backend 
 
-const sendToBackend = async (filtPlaces) => {
+  const sendToBackend = async (filtPlaces) => {
 
-  // Validate filtPlaces before sending
-  if (!Array.isArray(filtPlaces) || filtPlaces.length === 0) {
+    // Validate filtPlaces before sending
+    if (!Array.isArray(filtPlaces) || filtPlaces.length === 0) {
       console.error("Invalid data: filtPlaces must be a non-empty array.");
       return;
-  }
+    }
 
-  try {
-  console.log("Sending data to backend:", filtPlaces);
+    try {
+      console.log("Sending data to backend:", filtPlaces);
 
       const response = await axios.post("http://localhost:3000/restoList", { locations: filtPlaces });
 
       // Check for a successful response
       if (response.status === 200 && response.data.success) {
-          console.log("Backend Response:", response.data);
+        console.log("Backend Response:", response.data);
+        setAddresses(response.data.results);
+
       } else {
-          console.error("Backend returned an unexpected response:", response.data);
+        console.error("Backend returned an unexpected response:", response.data);
       }
-  } catch (error) {
+    } catch (error) {
       // Handle specific error cases
       if (error.response) {
-          // The request was made and the server responded with a status code outside 2xx
-          console.error("Backend Error:", error.response.status, error.response.data);
+        // The request was made and the server responded with a status code outside 2xx
+        console.error("Backend Error:", error.response.status, error.response.data);
       } else if (error.request) {
-          // The request was made but no response was received
-          console.error("No response received from backend:", error.request);
+        // The request was made but no response was received
+        console.error("No response received from backend:", error.request);
       } else {
-          // Something happened in setting up the request
-          console.error("Error setting up the request:", error.message);
+        // Something happened in setting up the request
+        console.error("Error setting up the request:", error.message);
       }
-  }
-};
+    }
+  };
 
   //get coordinates 
 
-const getCoordinates = async (address) => {
+  const getCoordinates = async (address) => {
     try {
       const response = await axios.get(
-        `https://nominatim.openstreetmap.org/search`, 
+        `https://nominatim.openstreetmap.org/search`,
         {
           params: {
             q: address, // The user’s address
@@ -70,12 +63,12 @@ const getCoordinates = async (address) => {
           }
         }
       );
-  
+
       if (response.data.length === 0) {
         console.error("No location found");
         return null;
       }
-  
+
       const { lat, lon } = response.data[0];
       console.log(`Latitude: ${lat}, Longitude: ${lon}`);
       return { lat, lon };
@@ -85,9 +78,9 @@ const getCoordinates = async (address) => {
     }
   };
 
-//function to call the nearbyPlaces API 
+  //function to call the nearbyPlaces API 
 
-const searchNearbyPlaces= async (lat, lon) => {
+  const searchNearbyPlaces = async (lat, lon) => {
     const query = `
         [out:json];
         (
@@ -100,19 +93,19 @@ const searchNearbyPlaces= async (lat, lon) => {
     const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
 
     try {
-        const response = await axios.get(url);
-        console.log("Nearby Places:", response.data.elements);
-        return response.data.elements || [];
+      const response = await axios.get(url);
+      console.log("Nearby Places:", response.data.elements);
+      return response.data.elements || [];
     } catch (error) {
-        console.error("Error fetching places:", error);
-        return [];
+      console.error("Error fetching places:", error);
+      return [];
     }
-}
-//use isButtonClicked to trigger useEffect when isButtonClicked is true
-useEffect(() => {
+  }
+  //use isButtonClicked to trigger useEffect when isButtonClicked is true
+  useEffect(() => {
     const fetchData = async () => {
       if (!address.trim()) return;
-  
+
       setLoading(true);
 
       try {
@@ -128,10 +121,10 @@ useEffect(() => {
             lon: place.lon
           }))
           setData(filteredPlaces); // Store the results
-        //   console.log("Fetched Nearby Places:",filteredPlaces)
+          //   console.log("Fetched Nearby Places:",filteredPlaces)
 
-        // Send filtered data to backend for comparison
-        await sendToBackend(filteredPlaces);
+          // Send filtered data to backend for comparison
+          await sendToBackend(filteredPlaces);
         } else {
           setData([]); // In case no coordinates were found
           console.log("no location found for the address")
@@ -144,18 +137,18 @@ useEffect(() => {
         setIsButtonClicked(false); // Stop loading state
       }
     };
-    if (isButtonClicked){
-        fetchData();
+    if (isButtonClicked) {
+      fetchData();
     }
-    }, [isButtonClicked]); // This will run every time the address changes
-  
+  }, [isButtonClicked]); // This will run every time the address changes
+
   const handleSearch = () => {
     if (!address.trim()) {
       alert("Please enter an address");
       return;
     }
     console.log("Searching for:", address);
-    setIsButtonClicked(true); 
+    setIsButtonClicked(true);
   };
 
   return (
@@ -173,6 +166,17 @@ useEffect(() => {
             setAddress={setAddress}
             onSearch={handleSearch}
           />
+          <div>
+            <h1>Restaurant List</h1>
+      
+            <ul>
+              {addresses.map((resto, index) => (
+                <li key={index}>
+                   Address: {resto.address}
+                </li>
+              ))}
+            </ul>
+          </div>
         </>
       )}
     </div>

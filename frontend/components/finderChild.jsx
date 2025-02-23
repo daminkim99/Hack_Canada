@@ -2,6 +2,7 @@ import React from "react";
 import  Button  from "./Button";
 import  Input  from "./input";
 
+
 const FinderChild = ({ address, setAddress, onSearch }) => {
   return (
     <div>
@@ -12,6 +13,8 @@ const FinderChild = ({ address, setAddress, onSearch }) => {
         onChange={(e) => {setAddress(e.target.value);}} form control here
       />
       <Button onClick={onSearch}>Search</Button> {/* Calls parent function */}
+
+  
     </div>
   );
 };
