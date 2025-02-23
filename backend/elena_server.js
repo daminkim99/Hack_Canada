@@ -4,12 +4,15 @@ const cors = require('cors')
 require('dotenv').config()
 const axios = require("axios");
 const router = express.Router();
+const bodyParser = require('body-parser');
 
 
 
 const app = express()
 app.use(cors())
 app.use(express.json())
+
+app.use(bodyParser.json());
 
 //connecting to the db 
 mongoose.connect(`mongodb+srv://${process.env.ID}:${process.env.PASSWORD}@cluster0.fddnv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`).then(() => {
@@ -156,6 +159,6 @@ app.post('/', async (req, res) => {
 });
 
 
-app.listen(6000, () => {
-    console.log('Server running on port 6000')
+app.listen(process.env.PORT, () => {
+    console.log('Server running on port ', process.env.PORT);
 })

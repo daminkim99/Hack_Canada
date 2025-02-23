@@ -31,7 +31,9 @@ const sendToBackend = async (filtPlaces) => {
   }
 
   try {
-      const response = await axios.post("http://localhost:6000/restoList", { locations: filtPlaces });
+  console.log("Sending data to backend:", filtPlaces);
+
+      const response = await axios.post("http://localhost:3000/restoList", { locations: filtPlaces });
 
       // Check for a successful response
       if (response.status === 200 && response.data.success) {
