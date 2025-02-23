@@ -2,6 +2,9 @@ const express = require('express')
 const mongoose = require ('mongoose')
 const cors = require('cors')
 require('dotenv').config()
+const axios = require("axios");
+const router = express.Router();
+
 
 
 const app = express()
@@ -26,6 +29,47 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema)
 
 //routes 
+
+app.post('/restoList', async (req,res) => {
+console.log("run")
+//first step to reverse-geocode
+let locations = req.body.locations; 
+if (!Array.isArray(locations) || locations.length === 0) {
+    return res.status(400).json({ error: "Invalid locations data" });
+}
+// Extract only lat and lon, ignoring other fields (e.g., name)
+locations = locations.map(({ lat, lon }) => ({ lat, lon }));
+
+try {
+    // Use Axios to make multiple requests in parallel
+    const results = await Promise.all(
+        locations.map(({ lat, lon }) =>
+            axios.get("https://nominatim.openstreetmap.org/reverse", {
+                params: { lat, lon, format: "json" },
+            })
+            .then(response => ({
+                lat,
+                lon,
+                address: response.data.display_name || "Address not found"
+            }))
+            .catch(error => ({
+                lat,
+                lon,
+                address: "Error fetching address"
+            }))
+        )
+    );
+    console.log(results)
+    //return the addresses only --> currently not working 
+    res.json({ results });
+
+    //if successful, compare if any of the response is in our database by address mathc 
+
+} catch (error) {
+    console.error("Error processing batch reverse geocode:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+}
+});
 
 app.post('/', async (req, res) => {
 
