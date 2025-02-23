@@ -1,0 +1,28 @@
+header {
+  height: 100px;
+  background-color: #d84572;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  .left {
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  img {
+    height: 4.5em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
+    border-radius: 50px;
+  }
+
+  .brandName {
+    margin-right: 50px;
+  }
+  .brandName p {
+    color: black;
+  }
+}

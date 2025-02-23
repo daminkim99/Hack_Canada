@@ -1,0 +1,21 @@
+#nav ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #e3898d;
+  color: #0000;
+  li,
+  a {
+    padding: 1em 2em;
+    color: black;
+    list-style-type: none;
+  }
+  a:hover {
+    color: #ffff;
+    font-weight: 700;
+  }
+}
+
+#nav ul .active {
+  background-color: #d84572;
+}
